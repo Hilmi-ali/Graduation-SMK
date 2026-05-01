@@ -46,8 +46,12 @@ export default function Login() {
 
     if (!querySnapshot.empty) {
       const data = querySnapshot.docs[0].data();
+
+      // simpan data siswa
       localStorage.setItem("student", JSON.stringify(data));
-      window.location.href = "/result";
+
+      // 🔥 redirect ke PROFILE (bukan result lagi)
+      window.location.href = "/profile";
     } else {
       alert("Data tidak ditemukan!");
     }
@@ -136,22 +140,23 @@ export default function Login() {
                 width: "34px",
                 height: "34px",
                 borderRadius: "9px",
-                background: G,
+                // background: G,
                 display: "flex",
                 alignItems: "center",
                 justifyContent: "center",
                 flexShrink: 0,
               }}
             >
-              <svg width="17" height="17" viewBox="0 0 17 17" fill="none">
-                <path
-                  d="M8.5 2L15 5.8V11.2L8.5 15L2 11.2V5.8L8.5 2Z"
-                  stroke="#fff"
-                  strokeWidth="1.3"
-                  strokeLinejoin="round"
-                />
-                <circle cx="8.5" cy="8.5" r="2" fill="rgba(255,255,255,0.45)" />
-              </svg>
+              <img
+                src="/logonu.jpg"
+                alt="logo"
+                style={{
+                  width: "100%",
+                  height: "100%",
+                  objectFit: "contain",
+                  borderRadius: "6px",
+                }}
+              />
             </div>
             <div>
               <div
@@ -244,28 +249,55 @@ export default function Login() {
           </div>
 
           {/* heading */}
-          <h1
-            className="fu1 m-title"
-            style={{
-              fontFamily: "'Playfair Display', serif;",
-              fontSize: "48px",
-              fontWeight: 500,
-              lineHeight: 1.18,
-              color: TEXT1,
-              marginBottom: "18px",
-            }}
-          >
-            Selamat kepada seluruh
-            <br />
-            <span style={{ color: G }}>lulusan</span>{" "}
-            <span style={{ fontStyle: "bold", color: GD }}>angkatan 2026</span>
-          </h1>
+
+          <div style={{ marginBottom: "28px" }}>
+            {/* TITLE */}
+            <h1
+              className="fu1 m-title"
+              style={{
+                fontFamily: "'Playfair Display', serif",
+                fontSize: "42px",
+                fontWeight: 600,
+                lineHeight: 1.2,
+                color: TEXT1,
+                marginBottom: "10px",
+                letterSpacing: "-0.5px",
+              }}
+            >
+              Pengumuman <span>Kelulusan</span> <br />{" "}
+              <span style={{ color: G }}>Angkatan XI</span>
+            </h1>
+
+            {/* SUBTITLE */}
+            <div
+              className="fu2"
+              style={{
+                fontSize: "13px",
+                color: TEXT2,
+                letterSpacing: "0.04em",
+              }}
+            >
+              SMK Diponegoro Cipari · Tahun Ajaran 2025 / 2026
+            </div>
+
+            {/* DECORATIVE LINE */}
+            <div
+              className="fu3"
+              style={{
+                width: "60px",
+                height: "3px",
+                background: "linear-gradient(90deg, #166534, #4ADE80)",
+                borderRadius: "2px",
+                margin: "16px auto 0",
+              }}
+            />
+          </div>
 
           {/* desc */}
           <p
             className="fu2"
             style={{
-              fontSize: "15px",
+              fontSize: "13px",
               color: TEXT2,
               lineHeight: 1.75,
               maxWidth: "440px",
@@ -285,7 +317,7 @@ export default function Login() {
                   justifyContent: "center",
                   gap: "10px",
                   flexWrap: "wrap",
-                  marginBottom: "14px",
+                  marginBottom: "34px",
                 }}
               >
                 {[
@@ -333,7 +365,13 @@ export default function Login() {
                   </div>
                 ))}
               </div>
-              <p style={{ fontSize: "12px", color: TEXT3 }}>
+              <p
+                style={{
+                  fontSize: "12px",
+                  color: TEXT3,
+                  paddingBottom: "75px",
+                }}
+              >
                 Pengumuman akan segera dibuka
               </p>
             </div>
@@ -518,76 +556,76 @@ export default function Login() {
             ))}
           </div>
         </div>
-
-        {/* ── INFO STRIP ── */}
-        <div
+        {/* FLOATING WA ADMIN */}
+        <a
+          href="https://wa.me/6282223954383"
+          target="_blank"
+          rel="noopener noreferrer"
           style={{
-            background: G,
-            padding: "18px 48px",
+            position: "fixed",
+            bottom: "95px",
+            right: "20px",
+            background: "#166534",
+            color: "white",
+            padding: "10px 15px",
+            borderRadius: "50px",
             display: "flex",
             alignItems: "center",
-            justifyContent: "center",
-            gap: "0",
-            flexWrap: "wrap",
+            gap: "3px",
+            textDecoration: "none",
+            fontSize: "11px",
+            fontWeight: "500",
+            boxShadow: "0 8px 20px rgba(0,0,0.2,0.45)",
+            zIndex: 999,
+            transition: "0.2s",
           }}
-          className="m-px m-wrap"
+          onMouseOver={(e) => (e.currentTarget.style.transform = "scale(1.05)")}
+          onMouseOut={(e) => (e.currentTarget.style.transform = "scale(1)")}
         >
-          {[
-            "SMK Diponegoro Cipari",
-            "Teknik Komputer & Jaringan",
-            "Akuntansi & Keuangan Lembaga",
-            "Angkatan 2026",
-          ].map((t, i, arr) => (
-            <span
-              key={i}
-              style={{ display: "inline-flex", alignItems: "center" }}
-            >
-              <span
-                style={{
-                  fontSize: "12px",
-                  color: "#BBF7D0",
-                  letterSpacing: "0.03em",
-                  padding: "0 20px",
-                }}
-              >
-                {t}
-              </span>
-              {i < arr.length - 1 && (
-                <span
-                  className="m-hide"
-                  style={{
-                    width: "3px",
-                    height: "3px",
-                    borderRadius: "50%",
-                    background: "#4ADE80",
-                    flexShrink: 0,
-                  }}
-                />
-              )}
-            </span>
-          ))}
-        </div>
-
+          💬 Bantuan
+        </a>
         {/* ── FOOTER ── */}
         <div
           style={{
-            background: WHITE,
-            borderTop: `1px solid ${BORDER}`,
-            padding: "18px 48px",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "space-between",
-            flexWrap: "wrap",
-            gap: "8px",
+            background: "#166534",
+            marginTop: "3px",
+            padding: "26px 20px",
+            textAlign: "center",
+            color: "#BBF7D0",
           }}
-          className="m-px"
         >
-          <span style={{ fontSize: "12px", color: TEXT3 }}>
+          <div
+            style={{
+              fontSize: "13px",
+              fontWeight: 500,
+              letterSpacing: "0.04em",
+              marginBottom: "6px",
+            }}
+          >
             SMK Diponegoro Cipari · Tahun Pelajaran 2025 / 2026
-          </span>
-          <span style={{ fontSize: "12px", color: "#D4D1C8" }}>
+          </div>
+
+          <div
+            style={{
+              fontSize: "11px",
+              opacity: 0.8,
+              letterSpacing: "0.05em",
+            }}
+          >
             Sistem Pengumuman Kelulusan
-          </span>
+          </div>
+
+          {/* garis kecil aesthetic */}
+          <div
+            style={{
+              width: "50px",
+              height: "2px",
+              background: "linear-gradient(90deg, #4ADE80, transparent)",
+              margin: "14px auto 0",
+              borderRadius: "2px",
+              opacity: 0.6,
+            }}
+          />
         </div>
       </div>
     </>

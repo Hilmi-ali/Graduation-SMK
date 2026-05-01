@@ -1,541 +1,304 @@
 import { useEffect, useState } from "react";
+import { generateSurat } from "../generate-surat";
 
 export default function Result() {
   const [data, setData] = useState(null);
+  const [step, setStep] = useState("loading");
   const [showConfetti, setShowConfetti] = useState(false);
-  const [showSuratMenu, setShowSuratMenu] = useState(false);
 
   useEffect(() => {
     const student = JSON.parse(localStorage.getItem("student"));
 
     setTimeout(() => {
       setData(student);
+      setStep("result");
 
       if (student?.status === "LULUS") {
         setShowConfetti(true);
-
-        // 🔥 AUTO STOP 3 DETIK
-        setTimeout(() => {
-          setShowConfetti(false);
-        }, 10000);
+        setTimeout(() => setShowConfetti(false), 3000);
       }
-    }, 800);
+    }, 2200);
   }, []);
 
-  const handleDownload = () => {
-    const link = document.createElement("a");
-    link.href = "/Surat Kelulusan Fix.pdf"; // pastikan file ada di public/
-    link.download = `Surat_Kelulusan_${data.nisn}.docx`;
-    link.click();
-  };
-
-  const handlePreview = () => {
-    window.open("/Surat Kelulusan Fix.pdf", "_blank");
-  };
-
-  if (!data) {
-    return (
-      <>
-        <style>{`
-          @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500&family=DM+Serif+Display&display=swap');
-          * { box-sizing: border-box; margin: 0; padding: 0; }
-
-          @keyframes shimmerMove {
-            0% { transform: translateX(-100%); }
-            100% { transform: translateX(100%); }
-          }
-          @keyframes pulse {
-            0%, 100% { opacity: 0.5; }
-            50% { opacity: 1; }
-          }
-
-          .skeleton-wrap {
-            min-height: 100vh;
-            background: #F7F6F2;
-            font-family: 'DM Sans', sans-serif;
-          }
-          .sk-nav {
-            padding: 18px 36px;
-            background: #fff;
-            border-bottom: 1px solid #EDEBE4;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-          }
-          .sk-logo { width: 160px; height: 14px; background: #E8E5DC; border-radius: 4px; animation: pulse 1.5s infinite; }
-          .sk-logo-sm { width: 80px; height: 14px; background: #E8E5DC; border-radius: 4px; animation: pulse 1.5s infinite 0.2s; }
-          .sk-body {
-            display: flex; justify-content: center; align-items: center;
-            min-height: calc(100vh - 57px); padding: 40px 20px;
-          }
-          .sk-card {
-            background: #fff;
-            border-radius: 24px;
-            border: 1px solid #EDEBE4;
-            padding: 40px 32px;
-            width: 100%; max-width: 380px;
-            display: flex; flex-direction: column; align-items: center; gap: 14px;
-          }
-          .sk-avatar { width: 88px; height: 88px; border-radius: 50%; background: #F0EDE4; animation: pulse 1.5s infinite; }
-          .sk-line { height: 12px; background: #F0EDE4; border-radius: 4px; animation: pulse 1.5s infinite; }
-        `}</style>
-        <div className="skeleton-wrap">
-          <div className="sk-nav">
-            <div className="sk-logo" />
-            <div className="sk-logo-sm" />
-          </div>
-          <div className="sk-body">
-            <div className="sk-card">
-              <div className="sk-avatar" />
-              <div className="sk-line" style={{ width: "60%" }} />
-              <div className="sk-line" style={{ width: "40%", opacity: 0.6 }} />
-              <div className="sk-line" style={{ width: "50%", opacity: 0.5 }} />
-              <div
-                className="sk-line"
-                style={{
-                  width: "100%",
-                  height: "56px",
-                  borderRadius: "12px",
-                  marginTop: "10px",
-                }}
-              />
-              <div
-                className="sk-line"
-                style={{ width: "100%", height: "44px", borderRadius: "10px" }}
-              />
-            </div>
-          </div>
-        </div>
-      </>
-    );
-  }
+  if (!data) return null;
 
   const isLulus = data.status === "LULUS";
 
   return (
-    <>
-      <style>{`
-        @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500&family=DM+Serif+Display:ital@0;1&display=swap');
-        @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600&family=DM+Sans:wght@400;500&display=swap');
-        @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500&family=Libre+Baskerville:wght@400;700&display=swap');
-        
-        * { box-sizing: border-box; margin: 0; padding: 0; }
-
-        @keyframes fadeUp {
-          from { opacity: 0; transform: translateY(24px); }
-          to   { opacity: 1; transform: translateY(0); }
-        }
-        @keyframes scaleIn {
-          from { opacity: 0; transform: scale(0.93); }
-          to   { opacity: 1; transform: scale(1); }
-        }
-        @keyframes confettiFall {
-          0%   { transform: translateY(-10vh) rotate(0deg); opacity: 1; }
-          100% { transform: translateY(105vh) rotate(480deg); opacity: 0; }
-        }
-        @keyframes ringPulse {
-          0%, 100% { opacity: 0.35; transform: scale(1); }
-          50%       { opacity: 0.6; transform: scale(1.06); }
-        }
-        @keyframes statusReveal {
-          from { opacity: 0; transform: translateY(10px); }
-          to   { opacity: 1; transform: translateY(0); }
-        }
-
-        .res-page {
-          min-height: 100vh;
-          background: #F7F6F2;
-          font-family: 'DM Sans', sans-serif;
-          color: #1C1B18;
-        }
-
-        .res-nav {
-          display: flex;
-          align-items: center;
-          justify-content: space-between;
-          padding: 16px 36px;
-          background: #FFFFFF;
-          border-bottom: 1px solid #EDEBE4;
-        }
-        .res-nav-left {
-          display: flex; flex-direction: column; gap: 1px;
-        }
-        .res-nav-school {
-          font-size: 13px;
-          font-weight: 500;
-          letter-spacing: 0.04em;
-          color: #1C1B18;
-        }
-        .res-nav-year {
-          font-size: 11px;
-          color: #9E9B91;
-          letter-spacing: 0.03em;
-        }
-        .res-nav-tag {
-          font-size: 11px;
-          font-weight: 500;
-          letter-spacing: 0.06em;
-          color: #534AB7;
-          background: #EEEDFE;
-          padding: 5px 14px;
-          border-radius: 99px;
-        }
-
-        .res-body {
-          display: flex;
-          justify-content: center;
-          align-items: center;
-          min-height: calc(100vh - 57px);
-          padding: 48px 20px;
-        }
-
-        .res-card {
-          background: #FFFFFF;
-          border-radius: 24px;
-          border: 1px solid #EDEBE4;
-          width: 100%;
-          max-width: 380px;
-          overflow: hidden;
-          animation: scaleIn 0.55s cubic-bezier(0.22,1,0.36,1) both;
-        }
-
-        .res-top {
-          padding: 36px 28px 28px;
-          display: flex;
-          flex-direction: column;
-          align-items: center;
-          gap: 0;
-          background: #FAFAF8;
-          border-bottom: 1px solid #EDEBE4;
-          position: relative;
-        }
-
-        .res-avatar-wrap {
-          position: relative;
-          margin-bottom: 18px;
-        }
-        .res-avatar-ring {
-          position: absolute;
-          inset: -6px;
-          border-radius: 50%;
-          border: 2px solid;
-          animation: ringPulse 2.8s ease-in-out infinite;
-        }
-        .res-avatar-ring.lulus  { border-color: #5DCAA5; }
-        .res-avatar-ring.tidak  { border-color: #F09595; }
-        .res-avatar {
-          width: 88px;
-          height: 88px;
-          border-radius: 50%;
-          object-fit: cover;
-          display: block;
-          border: 3px solid #fff;
-          position: relative;
-          z-index: 1;
-        }
-
-        .res-nama {
-          font-family: 'Outfit', serif;
-          font-size: 22px;
-          color: #1C1B18;
-          text-align: center;
-          line-height: 1.2;
-          margin-bottom: 6px;
-          animation: fadeUp 0.5s 0.2s both;
-        }
-        .res-nisn {
-          font-size: 12px;
-          color: #B4B2A9;
-          letter-spacing: 0.05em;
-          margin-bottom: 2px;
-          animation: fadeUp 0.5s 0.3s both;
-        }
-        .res-jurusan {
-          font-size: 13px;
-          color: #6E6C63;
-          animation: fadeUp 0.5s 0.35s both;
-        }
-
-        .res-bottom {
-          padding: 24px 28px 28px;
-          display: flex;
-          flex-direction: column;
-          gap: 12px;
-        }
-
-        .res-status-box {
-          border-radius: 14px;
-          padding: 18px 16px;
-          text-align: center;
-          animation: statusReveal 0.5s 0.45s both;
-        }
-        .res-status-box.lulus {
-          background: #E1F5EE;
-          border: 1px solid #9FE1CB;
-        }
-        .res-status-box.tidak {
-          background: #FCEBEB;
-          border: 1px solid #F7C1C1;
-        }
-        .res-status-label {
-          font-size: 11px;
-          font-weight: 500;
-          letter-spacing: 0.08em;
-          margin-bottom: 6px;
-        }
-        .res-status-box.lulus .res-status-label { color: #0F6E56; }
-        .res-status-box.tidak .res-status-label { color: #A32D2D; }
-
-        .res-status-icon {
-          display: inline-flex;
-          align-items: center;
-          justify-content: center;
-          width: 36px; height: 36px;
-          border-radius: 50%;
-          margin-bottom: 8px;
-        }
-        .res-status-box.lulus .res-status-icon { background: #1D9E75; }
-        .res-status-box.tidak .res-status-icon { background: #E24B4A; }
-
-        .res-status-text {
-          font-size: 15px;
-          font-weight: 500;
-          line-height: 1.35;
-        }
-        .res-status-box.lulus .res-status-text { color: #085041; }
-        .res-status-box.tidak .res-status-text { color: #791F1F; }
-
-        .res-status-sub {
-          font-size: 12px;
-          margin-top: 4px;
-        }
-        .res-status-box.lulus .res-status-sub { color: #0F6E56; }
-        .res-status-box.tidak .res-status-sub { color: #A32D2D; }
-
-        .res-btn {
-          width: 100%;
-          padding: 13px;
-          border-radius: 10px;
-          border: none;
-          font-family: 'DM Sans', sans-serif;
-          font-size: 13px;
-          font-weight: 500;
-          cursor: pointer;
-          transition: opacity 0.15s, transform 0.1s;
-          animation: fadeUp 0.5s 0.55s both;
-        }
-        .res-btn:active { transform: scale(0.98); }
-        .res-btn.primary {
-          background: #534AB7;
-          color: #EEEDFE;
-        }
-        .res-btn.primary:hover { opacity: 0.88; }
-        .res-btn.ghost {
-          background: transparent;
-          color: #6E6C63;
-          border: 1px solid #EDEBE4;
-        }
-        .res-btn.ghost:hover { background: #F7F6F2; }
-
-        .res-divider {
-          height: 1px;
-          background: #F0EDE4;
-          margin: 2px 0;
-        }
-
-        .confetti-piece {
-          position: fixed;
-          top: -12px;
-          width: 7px;
-          height: 7px;
-          border-radius: 2px;
-          pointer-events: none;
-          z-index: 9999;
-        }
-      .res-btn.secondary {
-  background: #EEEDFE;
-  color: #534AB7;
-  border: 1px solid #DCD9FF;
-}
-
-.res-btn.secondary:hover {
-  background: #E4E2FD;
-}
-
-.res-btn.download {
-  background: linear-gradient(135deg, #5DCAA5, #3FBF92);
-  color: white;
-}
-
-.res-btn.download:hover {
-  opacity: 0.9;
-}
-  .res-btn.surat {
-  background: linear-gradient(135deg, #5DCAA5, #3FBF92);
-  color: white;
-  position: relative;
-}
-
-.res-surat-menu {
-  position: absolute;
-  bottom: 110%;
-  left: 0;
-  width: 100%;
-  background: white;
-  border: 1px solid #EDEBE4;
-  border-radius: 10px;
-  overflow: hidden;
-  box-shadow: 0 10px 25px rgba(0,0,0,0.08);
-  animation: fadeUp 0.2s ease;
-  z-index: 10;
-}
-
-.res-surat-item {
-  padding: 12px;
-  font-size: 13px;
-  cursor: pointer;
-  transition: background 0.15s;
-}
-
-.res-surat-item:hover {
-  background: #F7F6F2;
-}
-      `}</style>
-
-      <div className="res-page">
-        {/* NAVBAR */}
-        <div className="res-nav">
-          <div className="res-nav-left">
-            <span className="res-nav-school">SMK DIPONEGORO CIPARI</span>
-            <span className="res-nav-year">Tahun Pelajaran 2025 / 2026</span>
+    <div
+      style={{
+        minHeight: "100vh",
+        background: "#F7F6F2",
+        fontFamily: "DM Sans, sans-serif",
+      }}
+    >
+      {/* NAVBAR FIXED */}
+      <div
+        style={{
+          position: "sticky",
+          top: 0,
+          zIndex: 100,
+          background: "#166534",
+          color: "white",
+          padding: "14px 32px",
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "center",
+          boxShadow: "0 2px 10px rgba(0,0,0,0.08)",
+        }}
+      >
+        <div>
+          <div style={{ fontSize: 13, fontWeight: 600 }}>
+            SMK DIPONEGORO CIPARI
           </div>
-          <span className="res-nav-tag">KELULUSAN 2026</span>
+          <div style={{ fontSize: 11, opacity: 0.8 }}>
+            Tahun Pelajaran 2025 / 2026
+          </div>
         </div>
 
-        {/* BODY */}
-        <div className="res-body">
-          <div className="res-card">
-            {/* TOP: avatar + identitas */}
-            <div className="res-top">
-              <div className="res-avatar-wrap">
-                <div
-                  className={`res-avatar-ring ${isLulus ? "lulus" : "tidak"}`}
-                />
+        <div
+          style={{
+            fontSize: 11,
+            background: "#DCFCE7",
+            color: "#14532D",
+            padding: "6px 14px",
+            borderRadius: 99,
+            fontWeight: 600,
+          }}
+        >
+          KELULUSAN 2026
+        </div>
+      </div>
+
+      {/* BODY */}
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          padding: "60px 20px",
+        }}
+      >
+        <div
+          style={{
+            width: "100%",
+            maxWidth: 380,
+            background: "#fff",
+            borderRadius: 26,
+            border: "1px solid #EDEBE4",
+            boxShadow: "0 30px 60px rgba(0,0,0,0.06)",
+            overflow: "hidden",
+            animation: "fadeUp 0.6s ease",
+          }}
+        >
+          {/* LOADING */}
+          {step === "loading" && (
+            <div style={{ padding: 60, textAlign: "center" }}>
+              <div
+                style={{
+                  width: 64,
+                  height: 64,
+                  borderRadius: "50%",
+                  border: "5px solid #E5E7EB",
+                  borderTop: "5px solid #166534",
+                  margin: "0 auto 20px",
+                  animation: "spin 1s linear infinite",
+                }}
+              />
+              <h3 style={{ fontWeight: 500 }}>Memverifikasi Data...</h3>
+              <p style={{ fontSize: 12, color: "#888" }}>
+                Sistem sedang memproses hasil kelulusan
+              </p>
+            </div>
+          )}
+
+          {/* RESULT */}
+          {step === "result" && (
+            <>
+              {/* HEADER */}
+              <div
+                style={{
+                  padding: "32px 24px",
+                  textAlign: "center",
+                  background: "#FAFAF8",
+                  borderBottom: "1px solid #EDEBE4",
+                }}
+              >
                 <img
-                  src={data.foto || "https://via.placeholder.com/110"}
-                  alt="foto"
-                  className="res-avatar"
-                  onError={(e) => {
-                    e.target.src = "https://via.placeholder.com/110";
+                  src={data.foto || "https://via.placeholder.com/100"}
+                  style={{
+                    width: 82,
+                    height: 82,
+                    borderRadius: "50%",
+                    objectFit: "cover",
+                    marginBottom: 14,
+                    border: "3px solid #fff",
+                    boxShadow: "0 6px 16px rgba(0,0,0,0.1)",
                   }}
                 />
-              </div>
-              <div className="res-nama">{data.nama}</div>
-              <div className="res-nisn">NISN · {data.nisn}</div>
-              <div className="res-jurusan">{data.jurusan}</div>
-            </div>
 
-            {/* BOTTOM: status + tombol */}
-            <div className="res-bottom">
-              <div className={`res-status-box ${isLulus ? "lulus" : "tidak"}`}>
-                <div className="res-status-icon">
-                  {isLulus ? (
-                    <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
-                      <path
-                        d="M3.5 9.5L7 13L14.5 5.5"
-                        stroke="#fff"
-                        strokeWidth="1.8"
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                      />
-                    </svg>
-                  ) : (
-                    <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
-                      <path
-                        d="M5 5L13 13M5 13L13 5"
-                        stroke="#fff"
-                        strokeWidth="1.8"
-                        strokeLinecap="round"
-                      />
-                    </svg>
-                  )}
+                <div style={{ fontSize: 19, fontWeight: 600 }}>{data.nama}</div>
+                <div style={{ fontSize: 12, color: "#999", marginTop: 5 }}>
+                  NISN · {data.nisn}
                 </div>
-                <div className="res-status-label">
-                  {isLulus ? "STATUS KELULUSAN" : "STATUS KELULUSAN"}
-                </div>
-                <div className="res-status-text">
-                  {isLulus ? "Dinyatakan Lulus" : "Belum Dinyatakan Lulus"}
-                </div>
-                <div className="res-status-sub">
-                  {isLulus
-                    ? "Selamat! Kamu telah menyelesaikan pendidikanmu."
-                    : "Mohon maaf. Hubungi wali kelas untuk info selanjutnya."}
+                <div style={{ fontSize: 13, color: "#666" }}>
+                  <strong>{data.jurusan}</strong>
                 </div>
               </div>
 
-              <div className="res-divider" />
-              {isLulus && (
-                <>
-                  <div style={{ position: "relative", width: "100%" }}>
-                    <button
-                      className="res-btn surat"
-                      onClick={() => setShowSuratMenu(!showSuratMenu)}
-                    >
-                      📄 Surat Kelulusan
-                    </button>
-
-                    {showSuratMenu && (
-                      <div className="res-surat-menu">
-                        <div
-                          className="res-surat-item"
-                          onClick={() => {
-                            handlePreview();
-                            setShowSuratMenu(false);
-                          }}
-                        >
-                          👁️ Lihat Surat
-                        </div>
-
-                        <div
-                          className="res-surat-item"
-                          onClick={() => {
-                            handleDownload();
-                            setShowSuratMenu(false);
-                          }}
-                        >
-                          ⬇️ Download Surat
-                        </div>
-                      </div>
-                    )}
+              {/* STATUS */}
+              <div style={{ padding: 24 }}>
+                <div
+                  style={{
+                    padding: 22,
+                    borderRadius: 18,
+                    textAlign: "center",
+                    background: isLulus ? "#ECFDF5" : "#FEF2F2",
+                    border: `1px solid ${isLulus ? "#A7F3D0" : "#FECACA"}`,
+                    boxShadow: "0 8px 20px rgba(0,0,0,0.04)",
+                  }}
+                >
+                  <div style={{ fontSize: 30, marginBottom: 8 }}>
+                    {isLulus ? "🎓" : "📄"}
                   </div>
 
-                  <div className="res-divider" />
-                </>
-              )}
-              <button
-                className="res-btn primary"
-                onClick={() => (window.location.href = "/")}
-              >
-                Kembali ke Beranda
-              </button>
-            </div>
-          </div>
-        </div>
+                  <div
+                    style={{
+                      fontSize: 17,
+                      fontWeight: 600,
+                      color: isLulus ? "#065F46" : "#991B1B",
+                    }}
+                  >
+                    {isLulus
+                      ? "ANDA DINYATAKAN LULUS"
+                      : "BELUM DINYATAKAN LULUS"}
+                  </div>
 
-        {/* CONFETTI */}
-        {showConfetti &&
-          [...Array(40)].map((_, i) => (
-            <div
-              key={i}
-              className="confetti-piece"
-              style={{
-                left: Math.random() * 100 + "%",
-                background: `hsl(${Math.random() * 360}, 80%, 60%)`,
-                animation: `confettiFall ${2 + Math.random()}s linear ${Math.random() * 0.8}s both`,
-              }}
-            />
-          ))}
+                  <div
+                    style={{
+                      fontSize: 13,
+                      marginTop: 6,
+                      color: isLulus ? "#065F46" : "#991B1B",
+                    }}
+                  >
+                    {isLulus
+                      ? "Selamat atas pencapaianmu 🎉"
+                      : "Silakan hubungi pihak sekolah untuk informasi lebih lanjut"}
+                  </div>
+                </div>
+                {isLulus && (
+                  <div
+                    style={{
+                      marginTop: 18,
+                      fontSize: 11,
+                      color: "#777",
+                      textAlign: "center",
+                      lineHeight: 1.6,
+                    }}
+                  >
+                    Selamat atas kelulusan Anda.
+                    <br />
+                    Perjalanan selama tiga tahun telah dilalui dengan baik,
+                    semoga menjadi awal yang baik untuk masa depan Anda.
+                  </div>
+                )}
+                {/* BUTTON */}
+                <div style={{ marginTop: 22 }}>
+                  {isLulus && (
+                    <button
+                      onClick={() => generateSurat(data)}
+                      style={{
+                        width: "100%",
+                        padding: 13,
+                        borderRadius: 12,
+                        border: "none",
+                        background: "linear-gradient(135deg,#22C55E,#16A34A)",
+                        color: "#fff",
+                        fontWeight: 600,
+                        marginBottom: 10,
+                        cursor: "pointer",
+                        transition: "0.2s",
+                      }}
+                      onMouseEnter={(e) => (e.target.style.opacity = "0.9")}
+                      onMouseLeave={(e) => (e.target.style.opacity = "1")}
+                    >
+                      📄 Lihat Surat Kelulusan
+                    </button>
+                  )}
+
+                  <button
+                    onClick={() => (window.location.href = "/profile")}
+                    style={{
+                      width: "100%",
+                      padding: 13,
+                      borderRadius: 12,
+                      border: "1px solid #E5E7EB",
+                      background: "#fff",
+                      color: "#555",
+                      cursor: "pointer",
+                    }}
+                  >
+                    ← Kembali ke Profil
+                  </button>
+                </div>
+              </div>
+            </>
+          )}
+        </div>
       </div>
-    </>
+
+      {/* CONFETTI HUJAN */}
+      {showConfetti &&
+        [...Array(120)].map((_, i) => (
+          <div
+            key={i}
+            style={{
+              position: "fixed",
+              top: "-10px",
+              left: Math.random() * 100 + "%",
+              width: Math.random() * 6 + 4 + "px",
+              height: Math.random() * 6 + 4 + "px",
+              background: `hsl(${Math.random() * 360}, 80%, 60%)`,
+              opacity: 0.9,
+              borderRadius: "2px",
+              animation: `confettiFall ${
+                Math.random() * 2 + 2
+              }s linear ${Math.random() * 1}s forwards`,
+            }}
+          />
+        ))}
+
+      <style>{`
+        @keyframes spin {
+          to { transform: rotate(360deg); }
+        }
+        @keyframes fadeUp {
+          from { opacity:0; transform: translateY(30px); }
+          to { opacity:1; transform: translateY(0); }
+        }
+        @keyframes confettiFall {
+          0% { transform: translateY(0) rotate(0deg); }
+          100% { transform: translateY(110vh) rotate(720deg); opacity: 0; }
+        }
+      `}</style>
+
+      {/* FOOTER */}
+      <div
+        style={{
+          background: "#166534",
+          marginTop: "20%",
+          padding: "26px 20px",
+          textAlign: "center",
+          color: "#BBF7D0",
+        }}
+      >
+        <div style={{ fontSize: "13px", fontWeight: 500 }}>
+          SMK Diponegoro Cipari · Tahun Pelajaran 2025 / 2026
+        </div>
+        <div style={{ fontSize: "11px", opacity: 0.8 }}>
+          Sistem Pengumuman Kelulusan
+        </div>
+      </div>
+    </div>
   );
 }

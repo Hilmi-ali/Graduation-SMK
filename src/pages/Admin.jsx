@@ -26,6 +26,7 @@ export default function Admin() {
   const [totalFiles, setTotalFiles] = useState(0);
   const [uploadedCount, setUploadedCount] = useState(0);
   const [failedUploads, setFailedUploads] = useState([]);
+  const [search, setSearch] = useState("");
 
   const [form, setForm] = useState({
     nama: "",
@@ -255,6 +256,21 @@ export default function Admin() {
     setForm(s);
     setEditId(s.id);
     setShowModal("add");
+  };
+  // 🔒 TOGGLE STATUS LULUS / DITAHAN
+  const toggleStatus = async (student) => {
+    const newStatus = student.status === "LULUS" ? "DITAHAN" : "LULUS";
+
+    await updateDoc(doc(db, "students", student.id), {
+      status: newStatus,
+    });
+
+    const updated = students.map((s) =>
+      s.id === student.id ? { ...s, status: newStatus } : s,
+    );
+
+    setStudents(updated);
+    localStorage.setItem("students", JSON.stringify(updated));
   };
 
   // 📊 UPLOAD EXCEL
@@ -490,6 +506,23 @@ export default function Admin() {
     setSelectAll(false);
     setLoading(false);
   };
+  const filteredStudents = students
+    .filter((s) => s.nama.toLowerCase().includes(search.toLowerCase()))
+    .sort((a, b) => {
+      const order = { AKL: 1, TJKT: 2 };
+
+      // urutkan berdasarkan jurusan dulu
+      if (order[a.jurusan] !== order[b.jurusan]) {
+        return (order[a.jurusan] || 99) - (order[b.jurusan] || 99);
+      }
+
+      // kalau jurusan sama, baru urut nama A-Z
+      return a.nama.localeCompare(b.nama);
+    });
+
+  const primary = "#2563eb"; // biru elegan
+  const danger = "#dc2626"; // merah clean
+  const neutral = "#334155"; // abu modern
 
   return (
     <div style={styles.container}>
@@ -498,41 +531,41 @@ export default function Admin() {
 
         <div style={styles.actions}>
           <button
-            style={{ ...styles.btn, background: "#22c55e", color: "white" }}
+            style={{ ...styles.btn, background: neutral, color: "white" }}
             onClick={() => setShowModal("add")}
           >
             + Tambah
           </button>
 
           <button
-            style={{ ...styles.btn, background: "#073b8f", color: "white" }}
+            style={{ ...styles.btn, background: neutral, color: "white" }}
             onClick={() => setShowModal("excel")}
           >
             Upload Excel
           </button>
 
           <button
-            style={{ ...styles.btn, background: "#a855f7", color: "white" }}
+            style={{ ...styles.btn, background: neutral, color: "white" }}
             onClick={() => setShowModal("foto")}
           >
             Upload Foto
           </button>
           <button
-            style={{ ...styles.btn, background: "#f59e0b", color: "white" }}
+            style={{ ...styles.btn, background: primary, color: "white" }}
             onClick={handleSelectAll}
           >
             {selectAll ? "Batal Pilih" : "Pilih Semua"}
           </button>
 
           <button
-            style={{ ...styles.btn, background: "#ef4444", color: "white" }}
+            style={{ ...styles.btn, background: danger, color: "white" }}
             onClick={handleDeleteSelected}
           >
             Hapus Terpilih ({selectedIds.length})
           </button>
 
           <button
-            style={{ ...styles.btn, background: "#7f1d1d", color: "white" }}
+            style={{ ...styles.btn, background: danger, color: "white" }}
             onClick={handleDeleteAll}
           >
             Hapus Semua
@@ -541,7 +574,7 @@ export default function Admin() {
       </div>
 
       <div style={styles.table}>
-        {students.map((s) => (
+        {filteredStudents.map((s) => (
           <div key={s.id} style={styles.row}>
             <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
               {/* CHECKBOX */}
@@ -561,13 +594,42 @@ export default function Admin() {
                   <div style={styles.subText}>
                     {s.nisn} • {s.jurusan || "-"}
                   </div>
+                  <div style={{ fontSize: "11px", color: "#64748b" }}>
+                    ID: {s.id}
+                  </div>
                 </div>
               </div>
             </div>
 
-            <div>
+            <div style={{ display: "flex", alignItems: "center" }}>
+              {/* STATUS BADGE */}
+              <span
+                style={{
+                  fontSize: "11px",
+                  padding: "4px 8px",
+                  borderRadius: "6px",
+                  marginRight: "8px",
+                  background: s.status === "LULUS" ? "#14532D" : "#7F1D1D",
+                  color: "white",
+                  fontWeight: "600",
+                }}
+              >
+                {s.status || "LULUS"}
+              </span>
+
+              {/* TOGGLE STATUS */}
               <button
-                style={{ ...styles.actionBtn, background: "#073b8f" }}
+                style={{
+                  ...styles.actionBtn,
+                  background: s.status === "LULUS" ? "#f59e0b" : "#22c55e",
+                }}
+                onClick={() => toggleStatus(s)}
+              >
+                {s.status === "LULUS" ? "Tahan" : "Luluskan"}
+              </button>
+
+              <button
+                style={{ ...styles.actionBtn, background: "#2563eb" }}
                 onClick={() => handleEdit(s)}
               >
                 Edit
@@ -576,7 +638,7 @@ export default function Admin() {
               <button
                 style={{
                   ...styles.actionBtn,
-                  background: "#ef4444",
+                  background: "#dc2626",
                   color: "white",
                 }}
                 onClick={() => handleDelete(s.id)}
@@ -614,6 +676,14 @@ export default function Admin() {
                     setForm({ ...form, jurusan: e.target.value })
                   }
                 />
+                <select
+                  style={styles.input}
+                  value={form.status}
+                  onChange={(e) => setForm({ ...form, status: e.target.value })}
+                >
+                  <option value="LULUS">LULUS</option>
+                  <option value="DITAHAN">DITAHAN</option>
+                </select>
                 <button onClick={handleSubmit}>Simpan</button>
               </>
             )}
