@@ -439,7 +439,7 @@ export default function Login() {
                       Cek status kelulusanmu
                     </div>
                     <div style={{ fontSize: "11px", color: TEXT3 }}>
-                      Masukkan NISN 10 digit
+                      Masukkan Password 10 digit
                     </div>
                   </div>
                 </div>
@@ -450,7 +450,7 @@ export default function Login() {
                 >
                   <input
                     type="text"
-                    placeholder="Nomor NISN kamu..."
+                    placeholder="Nomor Password kamu..."
                     value={nisn}
                     maxLength={10}
                     onChange={(e) => setNisn(e.target.value.replace(/\D/g, ""))}
@@ -495,7 +495,7 @@ export default function Login() {
 
                 <p style={{ fontSize: "11px", color: TEXT3, lineHeight: 1.55 }}>
                   Data bersifat rahasia dan hanya bisa diakses oleh pemilik
-                  NISN.
+                  Password.
                 </p>
               </div>
             </div>
