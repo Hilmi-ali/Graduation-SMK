@@ -3,7 +3,7 @@ import fontkit from "@pdf-lib/fontkit"; // ✅ WAJIB
 
 export const generateSurat = async (data) => {
   try {
-    const existingPdfBytes = await fetch("/surat-lulus-v2.pdf").then((res) =>
+    const existingPdfBytes = await fetch("/surat-lulus-v3.pdf").then((res) =>
       res.arrayBuffer(),
     );
 
