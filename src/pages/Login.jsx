@@ -315,9 +315,9 @@ export default function Login() {
                 style={{
                   display: "flex",
                   justifyContent: "center",
-                  gap: "10px",
+                  gap: "7px",
                   flexWrap: "wrap",
-                  marginBottom: "34px",
+                  marginBottom: "46px",
                 }}
               >
                 {[
@@ -332,8 +332,8 @@ export default function Login() {
                       background: WHITE,
                       border: `1px solid ${BORDER}`,
                       borderRadius: "16px",
-                      padding: "22px 14px 14px",
-                      minWidth: "84px",
+                      padding: "15px 11px 11px",
+                      minWidth: "74px",
                       textAlign: "center",
                     }}
                   >
@@ -341,7 +341,7 @@ export default function Login() {
                       key={val}
                       style={{
                         fontFamily: "'Plus Jakarta Sans', sans-serif;",
-                        fontSize: "38px",
+                        fontSize: "30px",
                         fontWeight: 500,
                         color: G,
                         lineHeight: 1,
@@ -517,7 +517,7 @@ export default function Login() {
           >
             {[
               { num: "100+", label: "Siswa lulus" },
-              { num: "100%", label: "Kelulusan" },
+              { num: "99%", label: "Kelulusan" },
               { num: "2", label: "Jurusan" },
             ].map(({ num, label }, i, arr) => (
               <div

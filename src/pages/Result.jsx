@@ -23,6 +23,8 @@ export default function Result() {
   if (!data) return null;
 
   const isLulus = data.status === "LULUS";
+  const isDitahan = data.status === "DITAHAN";
+  const isTidakLulus = data.status === "TIDAK LULUS";
 
   return (
     <div
@@ -153,8 +155,15 @@ export default function Result() {
                     padding: 22,
                     borderRadius: 18,
                     textAlign: "center",
-                    background: isLulus ? "#ECFDF5" : "#FEF2F2",
-                    border: `1px solid ${isLulus ? "#A7F3D0" : "#FECACA"}`,
+                    background: isLulus
+                      ? "#ECFDF5"
+                      : isDitahan
+                        ? "#FFFBEB"
+                        : "#FEF2F2",
+
+                    border: `1px solid ${
+                      isLulus ? "#A7F3D0" : isDitahan ? "#FDE68A" : "#FECACA"
+                    }`,
                     boxShadow: "0 8px 20px rgba(0,0,0,0.04)",
                   }}
                 >
@@ -171,7 +180,9 @@ export default function Result() {
                   >
                     {isLulus
                       ? "ANDA DINYATAKAN LULUS"
-                      : "BELUM DINYATAKAN LULUS"}
+                      : isDitahan
+                        ? "KELULUSAN DITUNDA"
+                        : "ANDA DINYATAKAN TIDAK LULUS"}
                   </div>
 
                   <div
@@ -286,7 +297,7 @@ export default function Result() {
       <div
         style={{
           background: "#166534",
-          marginTop: "20%",
+          marginTop: "17%",
           padding: "26px 20px",
           textAlign: "center",
           color: "#BBF7D0",

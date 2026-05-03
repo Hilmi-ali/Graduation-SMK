@@ -259,7 +259,15 @@ export default function Admin() {
   };
   // 🔒 TOGGLE STATUS LULUS / DITAHAN
   const toggleStatus = async (student) => {
-    const newStatus = student.status === "LULUS" ? "DITAHAN" : "LULUS";
+    let newStatus;
+
+    if (student.status === "LULUS") {
+      newStatus = "DITAHAN";
+    } else if (student.status === "DITAHAN") {
+      newStatus = "TIDAK LULUS";
+    } else {
+      newStatus = "LULUS";
+    }
 
     await updateDoc(doc(db, "students", student.id), {
       status: newStatus,
@@ -621,11 +629,20 @@ export default function Admin() {
               <button
                 style={{
                   ...styles.actionBtn,
-                  background: s.status === "LULUS" ? "#f59e0b" : "#22c55e",
+                  background:
+                    s.status === "LULUS"
+                      ? "#f59e0b"
+                      : s.status === "DITAHAN"
+                        ? "#ef4444"
+                        : "#22c55e",
                 }}
                 onClick={() => toggleStatus(s)}
               >
-                {s.status === "LULUS" ? "Tahan" : "Luluskan"}
+                {s.status === "LULUS"
+                  ? "Tahan"
+                  : s.status === "DITAHAN"
+                    ? "Tidak Lulus"
+                    : "Luluskan"}
               </button>
 
               <button
@@ -683,6 +700,7 @@ export default function Admin() {
                 >
                   <option value="LULUS">LULUS</option>
                   <option value="DITAHAN">DITAHAN</option>
+                  <option value="TIDAK LULUS">TIDAK LULUS</option>
                 </select>
                 <button onClick={handleSubmit}>Simpan</button>
               </>
